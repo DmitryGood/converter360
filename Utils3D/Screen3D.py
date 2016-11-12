@@ -46,7 +46,11 @@ class Screen3D():
         self.C = round ( dist * math.cos(theta) * math.sin(phi), 6)
 
         self.normal = Vector3D(self.A, self.B, self.C)
-        self.vector_h = Vector3D(self.B, -self.A, 0).normal()
+        if (self.A == 0 and self.B == 0):
+            th_sign = (theta - math.pi) / abs( theta - math.pi)
+            self.vector_h = Vector3D(0, th_sign, 0).normal()
+        else:
+            self.vector_h = Vector3D(self.B, -self.A, 0).normal()
         self.vector_v = (self.normal ** self.vector_h).normal()
 
     def get_screen_vector_by_coord(self, x, y):
