@@ -43,4 +43,5 @@ while(True):
 #part = img[500:900,500:600]
 #cv2.imshow('Input image', part)
 #cv2.waitKey()
+cv2.imwrite("../out/test.jpg", part)
 cv2.destroyAllWindows()

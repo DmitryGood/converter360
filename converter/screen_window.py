@@ -27,6 +27,7 @@ def processMouseInput(event, x, y, flags, param):
 # open file
 #img = cv2.imread('../img/balcony.jpg')
 img = cv2.imread('../img/circle_4bf.jpg')
+#img = cv2.imread('../img/down.jpg')
 img_size = img.shape
 
 # exit if wrong size

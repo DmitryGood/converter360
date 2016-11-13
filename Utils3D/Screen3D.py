@@ -120,8 +120,14 @@ class Screen3D():
                     cyl = self.get_cylindric_coordinates(v)
                     dist, phi, theta = cyl.getRadians()
                     if theta >=0:
+                        # theta correction
+                        gamma = 1.3
+                        core = (math.pi / 2 - theta) / (math.pi / 2)
+                        if core != 0:
+                            core = 1 - (1 - core) ** gamma
+
                         # draw from the left image
-                        radius = (math.pi / 2 - theta) / (math.pi / 2) * cam_radius  # theta: 0 = center, pi/2 = edge
+                        radius = core * cam_radius  # theta: 0 = center, pi/2 = edge
                         angle = phi + math.pi
                         cam_x = int(round(radius * math.cos(angle) + cam_center[0][0], 0))
                         cam_y = int(round(radius * math.sin(angle) + cam_center[0][1], 0))
@@ -133,11 +139,17 @@ class Screen3D():
                             if temp_image != None:
                                 cv2.circle(temp_image, (cam_x, cam_y), 2, color, 2)
                         if (x == 0 and y == 0) or (x == self.rx and y == self.ry):
-                            print cyl.getDegrees()
+                            pass
+                            #print cyl.getDegrees()
                     else:   # Theta < 0
                         # draw from the right image
                         theta = abs(theta)
-                        radius = (math.pi / 2 - theta) / (math.pi / 2) * cam_radius  # theta: 0 = center, pi/2 = edge
+                        # theta correction
+                        gamma = 1.3
+                        core = (math.pi / 2 - theta) / (math.pi / 2)
+                        if core != 0:
+                            core = 1 - (1 - core) ** gamma
+                        radius = core * cam_radius  # theta: 0 = center, pi/2 = edge
                         angle = phi
                         cam_x = int(round(radius * math.cos(angle) + cam_center[1][0], 0))
                         cam_y = int(round(cam_center[1][1] - radius * math.sin(angle), 0))
@@ -149,5 +161,6 @@ class Screen3D():
                             if temp_image != None:
                                 cv2.circle(temp_image, (cam_x, cam_y), 2, color, 2)
                         if (x == 0 and y == 0) or (x == self.rx and y == self.ry):
-                            print cyl.getDegrees()
+                            pass
+                            #print cyl.getDegrees()
         return cam_img
