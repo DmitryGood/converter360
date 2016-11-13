@@ -1,4 +1,6 @@
 import math
+import numpy as np
+import cv2
 from Utils3D.Vector3D import Vector3D
 
 def degToRad(deg):
@@ -75,3 +77,77 @@ class Screen3D():
 
         return CylindricCoordinates(dist, radToDeg(phi), radToDeg(theta))
 
+    def getHalfScreenImage(self, cam_image, cam_center, cam_radius, temp_image = None, color=(0, 255, 0)):
+        size_y, size_x, c = cam_image.shape
+
+        cam_img = np.zeros((self.ry + 1, self.rx + 1, 3), dtype=cam_image.dtype)
+        for x in range(0, self.rx + 1):
+            for y in range(0, self.ry + 1):
+
+                if (True):
+                    # do only for canvas
+                    v = self.get_screen_vector_by_coord(x, y)
+                    cyl = self.get_cylindric_coordinates(v)
+                    dist, phi, theta = cyl.getRadians()
+                    # convert cylindric coordinates to camera coordinates
+                    radius = (math.pi / 2 - theta) / (math.pi / 2) * cam_radius  # theta: 0 = center, pi/2 = edge
+                    angle = phi + math.pi
+                    cam_x = int(round(radius * math.cos(angle) + cam_center[0], 0))
+                    cam_y = int(round(radius * math.sin(angle) + cam_center[1], 0))
+                    if (cam_x < 0 or cam_x > size_x - 1 or cam_y < 0 or cam_y > size_y - 1):
+                        continue
+                    # print "Vector: %s, cyl: %s, cam: <%s, %s>, point: ( %s, %s)" % (v, cyl, radius, angle, cam_x, cam_y)
+                    cam_img[y, x] = cam_image[cam_y, cam_x]
+                    if (x == 0 or x == self.rx or y == 0 or y == self.ry):
+                        if temp_image != None:
+                            cv2.circle(temp_image, (cam_x, cam_y), 2, color, 2)
+                    if (x == 0 and y==0) or (x==self.rx and y==self.ry):
+                        print cyl.getDegrees()
+        return cam_img
+
+
+    def getFullScreenImage(self, cam_image, cam_center, cam_radius, temp_image=None, color=(0, 255, 0)):
+        size_y, size_x, c = cam_image.shape
+        size_half_x = size_x // 2
+
+        cam_img = np.zeros((self.ry + 1, self.rx + 1, 3), dtype=cam_image.dtype)
+        for x in range(0, self.rx + 1):
+            for y in range(0, self.ry + 1):
+
+                if (True):
+                    # do only for canvas
+                    v = self.get_screen_vector_by_coord(x, y)
+                    cyl = self.get_cylindric_coordinates(v)
+                    dist, phi, theta = cyl.getRadians()
+                    if theta >=0:
+                        # draw from the left image
+                        radius = (math.pi / 2 - theta) / (math.pi / 2) * cam_radius  # theta: 0 = center, pi/2 = edge
+                        angle = phi + math.pi
+                        cam_x = int(round(radius * math.cos(angle) + cam_center[0][0], 0))
+                        cam_y = int(round(radius * math.sin(angle) + cam_center[0][1], 0))
+                        if (cam_x < 0 or cam_x > size_half_x - 1 or cam_y < 0 or cam_y > size_y - 1):
+                            continue
+                        # print "Vector: %s, cyl: %s, cam: <%s, %s>, point: ( %s, %s)" % (v, cyl, radius, angle, cam_x, cam_y)
+                        cam_img[y, x] = cam_image[cam_y, cam_x]
+                        if (x == 0 or x == self.rx or y == 0 or y == self.ry):
+                            if temp_image != None:
+                                cv2.circle(temp_image, (cam_x, cam_y), 2, color, 2)
+                        if (x == 0 and y == 0) or (x == self.rx and y == self.ry):
+                            print cyl.getDegrees()
+                    else:   # Theta < 0
+                        # draw from the right image
+                        theta = abs(theta)
+                        radius = (math.pi / 2 - theta) / (math.pi / 2) * cam_radius  # theta: 0 = center, pi/2 = edge
+                        angle = phi
+                        cam_x = int(round(radius * math.cos(angle) + cam_center[1][0], 0))
+                        cam_y = int(round(cam_center[1][1] - radius * math.sin(angle), 0))
+                        if (cam_x < size_half_x or cam_x > size_x - 1 or cam_y < 0 or cam_y > size_y - 1):
+                            continue
+                        # print "Vector: %s, cyl: %s, cam: <%s, %s>, point: ( %s, %s)" % (v, cyl, radius, angle, cam_x, cam_y)
+                        cam_img[y, x] = cam_image[cam_y, cam_x]
+                        if (x == 0 or x == self.rx or y == 0 or y == self.ry):
+                            if temp_image != None:
+                                cv2.circle(temp_image, (cam_x, cam_y), 2, color, 2)
+                        if (x == 0 and y == 0) or (x == self.rx and y == self.ry):
+                            print cyl.getDegrees()
+        return cam_img

@@ -21,7 +21,7 @@ cv2.imshow("Right image", right_small)
 
 while (True):
 
-    part = left_img.copy()
+    part = right_img.copy()
     cv2.circle(part, (x, y), radius, color, thickness=2)
     text = " %s, %s, %s" % (x, y, radius)
     #print text
@@ -29,7 +29,7 @@ while (True):
     small = cv2.resize(part, None, fx=0.25, fy=0.25)
     cv2.putText(small, text, (-5, 15), cv2.FONT_HERSHEY_TRIPLEX, 0.5, (255, 255, 255))
 
-    cv2.imshow('Left image', small)
+    cv2.imshow('Right image', small)
 
     # Keyboard input
     c = cv2.waitKey(1)
