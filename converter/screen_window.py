@@ -10,7 +10,7 @@ def processMouseInput(event, x, y, flags, param):
 
     if event == cv2.EVENT_LBUTTONDOWN:
         x = x / display_ratio
-        y = y / display_ratiopython
+        y = y / display_ratio
         if x > 0 and x < size_x and y > 0 and y < size_y:
             rel_x = ( x - cam_center[0])
             r = math.sqrt( rel_x ** 2 + (y - cam_center[1]) ** 2)
